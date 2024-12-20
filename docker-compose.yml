@@ -2,15 +2,15 @@ version: '3.7'
 
 services:
   nginx-rtmp:
-    image: hlsserver
+    image: nginx-rtmp
     ports:
-      - "1935:1935"     # RTMP 推流端口
-      - "8080:8080"     # HLS 流媒体播放端口
+      - "1935:1935" # RTMP 推流端口
+      - "8080:8080" # HLS 流媒体播放端口
     volumes:
-      - ./nginx.conf:/etc/nginx/nginx.conf  # 将自定义的配置文件挂载到容器中
-      - ./hls:/tmp/hls                       # 存放 HLS 分片的目录
-      - ./html:/usr/local/nginx/html         # 将 html 目录挂载到 NGINX 静态目录
+      - ./nginx.conf:/usr/local/nginx/conf/nginx.conf
+      # - ./hls:/tmp/hls # 存放 HLS 分片的目录
+      - ./html:/usr/local/nginx/html # 将 html 目录挂载到 NGINX 静态目录
 
     restart: always
     environment:
-      - TZ=Asia/Shanghai  # 设置时区，可根据需求调整
+      - TZ=Asia/Shanghai # 设置时区，可根据需求调整

@@ -37,9 +37,6 @@ RUN rm -rf /tmp/nginx-1.25.0 /tmp/nginx-rtmp-module
 # 创建 HLS 目录
 RUN mkdir -p /tmp/hls
 
-# 复制自定义 nginx.conf 配置文件
-COPY nginx.conf /usr/local/nginx/conf/nginx.conf
-
 # 暴露所需端口
 EXPOSE 1935 8080
 
