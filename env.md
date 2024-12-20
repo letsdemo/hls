@@ -7,11 +7,11 @@ HTTP Live Streaming (HLS) 是一种广泛使用的流媒体传输协议，特别
 2.1 使用docker编译 Nginx 和 RTMP 模块
 
    * [Docker镜像文件](./Dockerfile)
-   * 编译脚本
+   * 编译镜像：
      
-    ```bash
-     docker build -t nginx-rtmp .
-    ```
+        ```bash
+        docker build -t nginx-rtmp .
+        ```
 
 2.2 配置 Nginx RTMP
 * 编辑 [Nginx 的配置文件](./nginx.conf)（通常位于 /usr/local/nginx/conf/nginx.conf）
