@@ -52,44 +52,46 @@
 
 ### 1.2.1 M3U8 文件格式
     
-    M3U8文件是HLS协议中使用的播放列表文件，它是一个文本文件，包含了视频流中各个媒体片段的列表。每个片段通常是一个`.ts`文件，包含了视频、音频或其他数据。M3U8文件还包含了每个片段的持续时间和其他可选信息，如码率、分辨率等。
-    M3U8文件的基本结构包括以下几个部分：
+  * M3U8文件是HLS协议中使用的播放列表文件，它是一个文本文件，包含了视频流中各个媒体片段的列表。
+  *  每个片段通常是一个`.ts`文件，包含了视频、音频或其他数据。
+  *  M3U8文件还包含了每个片段的持续时间和其他可选信息，如码率、分辨率等。
+  *  M3U8文件的基本结构包括以下几个部分：
     
-1. **文件头**：文件的第一行通常是`#EXTM3U`，表示这是一个M3U8格式的播放列表文件。
-2. **文件格式说明**：文件中可能包含一些以`#`开头的行，这些行提供了播放列表的格式信息，例如：
-    - `#EXT-X-TARGETDURATION`：指定播放列表中所有媒体片段的最大持续时间。
-    - `#EXT-X-MEDIA-SEQUENCE`：指定播放列表中第一个媒体片段的序列号。
-    - `#EXT-X-ENDLIST`：表示播放列表是完整的，没有更多的媒体片段。
-3. **媒体片段条目**：
-   文件中的其他行通常是媒体片段的描述，每个条目代表一个`.ts`文件，例如：
-    ```m3u8
-    #EXTINF:10,
-    http://example.com/path/to/video_segment_001.ts
-    #EXTINF:12,
-    http://example.com/path/to/video_segment_002.ts
-    #EXTINF:11,
-    http://example.com/path/to/video_segment_003.ts
-    ...
-    ```
+     1. **文件头**：文件的第一行通常是`#EXTM3U`，表示这是一个M3U8格式的播放列表文件。
+     2. **文件格式说明**：文件中可能包含一些以`#`开头的行，这些行提供了播放列表的格式信息，例如：
+         - `#EXT-X-TARGETDURATION`：指定播放列表中所有媒体片段的最大持续时间。
+         - `#EXT-X-MEDIA-SEQUENCE`：指定播放列表中第一个媒体片段的序列号。
+         - `#EXT-X-ENDLIST`：表示播放列表是完整的，没有更多的媒体片段。
+     3. **媒体片段条目**：
+        文件中的其他行通常是媒体片段的描述，每个条目代表一个`.ts`文件，例如：
+         ```m3u8
+         #EXTINF:10,
+         http://example.com/path/to/video_segment_001.ts
+         #EXTINF:12,
+         http://example.com/path/to/video_segment_002.ts
+         #EXTINF:11,
+         http://example.com/path/to/video_segment_003.ts
+         ...
+         ```
 
-4. 完整的示例：
-    ```m3u8
-    #EXTM3U
-    #EXT-X-VERSION:3
-    #EXT-X-MEDIA-SEQUENCE:0
-    #EXT-X-TARGETDURATION:4
-    #EXT-X-DISCONTINUITY
-    #EXTINF:4.166,
-    stream-0.ts
-    #EXTINF:4.167,
-    stream-1.ts
-    #EXTINF:4.166,
-    stream-2.ts
-    #EXTINF:4.167,
-    stream-3.ts
-    #EXTINF:3.083,
-    stream-4.ts
-    ```
+     4. 完整的示例：
+         ```m3u8
+         #EXTM3U
+         #EXT-X-VERSION:3
+         #EXT-X-MEDIA-SEQUENCE:0
+         #EXT-X-TARGETDURATION:4
+         #EXT-X-DISCONTINUITY
+         #EXTINF:4.166,
+         stream-0.ts
+         #EXTINF:4.167,
+         stream-1.ts
+         #EXTINF:4.166,
+         stream-2.ts
+         #EXTINF:4.167,
+         stream-3.ts
+         #EXTINF:3.083,
+         stream-4.ts
+         ```
 
 <div style="page-break-after: always;"></div>
 
@@ -203,6 +205,12 @@ sequenceDiagram
 # 3. HLS 的协议代理
 * HLS协议代理: 代理的是拉流服务器(Web服务器)
 * 使用nginx的http反向代理模块，实现hls协议代理
+* hls作为点播场景使用时，只需要修改http协议代理地址。
+* hls作为直播场景使用时，hls只是直播流程中的一小部分，还要涉及到其他协议的配合代理。
+  * 会话建立(如SIP协议)中需要修改相应的地址，具体情况具体分析。
+  * 会话协议的代理(如SIP协议)，具体情况具体分析。
+  * 推流协议的代理，要看推流位置，具体情况具体分析。
+  * 其他关联通信协议的代理，具体情况具体分析。
 
 ```mermaid
 sequenceDiagram
@@ -293,9 +301,9 @@ CMD ["sbin/nginx", "-g", "daemon off;"]
 
 ### 4.2.2 启动服务器
 * 使用docker compose 做服务编排
-* 推流服务器端口: 1935
-* HLS播放服务器端口: 8080
-* 反向代理服务器端口: 80
+* 推流服务器端口: `1935`
+* HLS播放服务器端口: `8080`
+* 反向代理服务器端口: `80`
 * 服务编排文件(包含流媒体服务器、反向代理服务器)如下：
 ```yml
 version: '3.7'
@@ -412,8 +420,8 @@ docker-compose up -d
 ### 4.3.2 配置 OBS 进行推流
 * 打开 OBS Studio，点击“设置”->“流”，选择“自定义流密钥”作为服务类型，并填写如下信息：
 
-  * 服务器：rtmp://<your-server-ip>:1935/live
-  * 流密钥：stream （或任何您想要的字符串）
+  * 服务器：`rtmp://<your-server-ip>:1935/live`
+  * 流密钥：`stream` （或任何您想要的字符串）
   * 点击“应用”保存设置，然后点击“开始推流”按钮开始向 Nginx 服务器推送视频流。
 
 ## 4.4 客户端播放
